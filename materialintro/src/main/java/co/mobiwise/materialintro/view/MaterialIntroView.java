@@ -416,7 +416,7 @@ public class MaterialIntroView extends RelativeLayout {
     /**
      * Dismiss Material Intro View
      */
-    public void dismiss() {
+    private void dismiss() {
         preferencesManager.setDisplayed(materialIntroViewId);
         AnimationFactory.animateFadeOut(this, fadeAnimationDuration, new AnimationListener.OnAnimationEndListener() {
             @Override
@@ -426,6 +426,20 @@ public class MaterialIntroView extends RelativeLayout {
 
                 if (materialIntroListener != null)
                     materialIntroListener.onUserClicked(materialIntroViewId);
+            }
+        });
+    }
+
+    /**
+     * Dismiss Material Intro View, without handling the clicked action
+     */
+    public void dismissNoAction() {
+        preferencesManager.setDisplayed(materialIntroViewId);
+        AnimationFactory.animateFadeOut(this, fadeAnimationDuration, new AnimationListener.OnAnimationEndListener() {
+            @Override
+            public void onAnimationEnd() {
+                setVisibility(GONE);
+                removeMaterialView();
             }
         });
     }
