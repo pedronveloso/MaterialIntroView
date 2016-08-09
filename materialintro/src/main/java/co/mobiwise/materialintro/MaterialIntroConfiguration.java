@@ -21,6 +21,8 @@ public class MaterialIntroConfiguration {
 
     private boolean dismissOnTouch;
 
+    private boolean displaySkipButton;
+
     private int colorTextViewInfo;
 
     private boolean isDotViewEnabled;
@@ -38,6 +40,7 @@ public class MaterialIntroConfiguration {
         dismissOnTouch = false;
         isDotViewEnabled = false;
         isImageViewEnabled = true;
+        displaySkipButton = false;
     }
 
     public int getMaskColor() {
@@ -114,5 +117,13 @@ public class MaterialIntroConfiguration {
 
     public void setDotViewEnabled(boolean dotViewEnabled) {
         isDotViewEnabled = dotViewEnabled;
+    }
+
+    public boolean isDisplaySkipButton() {
+        return displaySkipButton;
+    }
+
+    public void setDisplaySkipButton(boolean displaySkipButton) {
+        this.displaySkipButton = displaySkipButton;
     }
 }

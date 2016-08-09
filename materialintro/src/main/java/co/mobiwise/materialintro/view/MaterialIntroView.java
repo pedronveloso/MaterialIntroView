@@ -12,7 +12,6 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,19 +23,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import co.mobiwise.materialintro.MaterialIntroConfiguration;
+import co.mobiwise.materialintro.R;
 import co.mobiwise.materialintro.animation.AnimationFactory;
 import co.mobiwise.materialintro.animation.AnimationListener;
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
 import co.mobiwise.materialintro.prefs.PreferencesManager;
-import co.mobiwise.materialintro.utils.Constants;
-import co.mobiwise.materialintro.MaterialIntroConfiguration;
-import co.mobiwise.materialintro.R;
-import co.mobiwise.materialintro.utils.Utils;
 import co.mobiwise.materialintro.shape.Circle;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.target.Target;
 import co.mobiwise.materialintro.target.ViewTarget;
+import co.mobiwise.materialintro.utils.Constants;
+import co.mobiwise.materialintro.utils.Utils;
 
 /**
  * Created by mertsimsek on 22/01/16.
@@ -67,6 +66,8 @@ public class MaterialIntroView extends RelativeLayout {
      * this is enabled.
      */
     private boolean isFadeAnimationEnabled;
+
+    private boolean displaySkipButton;
 
     /**
      * Animation duration
@@ -138,6 +139,13 @@ public class MaterialIntroView extends RelativeLayout {
      * Info Dialog Text
      */
     private TextView textViewInfo;
+
+    /**
+     * Info Dialog Text
+     */
+    private TextView laterView;
+
+    private String skipButtonText = "Later";
 
     /**
      * Info dialog text color
@@ -246,6 +254,7 @@ public class MaterialIntroView extends RelativeLayout {
         isDotViewEnabled = false;
         isPerformClick = false;
         isImageViewEnabled = true;
+        displaySkipButton = false;
 
         /**
          * initialize objects
@@ -264,6 +273,7 @@ public class MaterialIntroView extends RelativeLayout {
         infoView = layoutInfo.findViewById(R.id.info_layout);
         textViewInfo = (TextView) layoutInfo.findViewById(R.id.textview_info);
         textViewInfo.setTextColor(colorTextViewInfo);
+        laterView = (TextView) layoutInfo.findViewById(R.id.laterButton);
         imageViewIcon = (ImageView) layoutInfo.findViewById(R.id.imageview_icon);
 
         dotView = LayoutInflater.from(getContext()).inflate(R.layout.dotview, null);
@@ -274,6 +284,7 @@ public class MaterialIntroView extends RelativeLayout {
             public void onGlobalLayout() {
                 circleShape.reCalculateAll();
                 if (circleShape != null && circleShape.getPoint().y != 0 && !isLayoutCompleted) {
+                    setSkipLayout();
                     if (isInfoEnabled)
                         setInfoLayout();
                     if(isDotViewEnabled)
@@ -467,7 +478,7 @@ public class MaterialIntroView extends RelativeLayout {
 
                 RelativeLayout.LayoutParams infoDialogParams = new RelativeLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.FILL_PARENT);
+                        ViewGroup.LayoutParams.MATCH_PARENT);
 
                 if (circleShape.getPoint().y < height / 2) {
                     ((RelativeLayout) infoView).setGravity(Gravity.TOP);
@@ -498,6 +509,28 @@ public class MaterialIntroView extends RelativeLayout {
             }
         });
     }
+
+    private void setSkipLayout() {
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (displaySkipButton) {
+                    laterView.setVisibility(View.VISIBLE);
+                    laterView.setText(skipButtonText);
+                    laterView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dismissNoAction();
+                        }
+                    });
+                } else {
+                    laterView.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
 
     private void setDotViewLayout() {
 
@@ -607,6 +640,7 @@ public class MaterialIntroView extends RelativeLayout {
             this.colorTextViewInfo = configuration.getColorTextViewInfo();
             this.focusType = configuration.getFocusType();
             this.focusGravity = configuration.getFocusGravity();
+            this.displaySkipButton = configuration.isDisplaySkipButton();
         }
     }
 
@@ -721,6 +755,16 @@ public class MaterialIntroView extends RelativeLayout {
 
         public Builder performClick(boolean isPerformClick){
             materialIntroView.setPerformClick(isPerformClick);
+            return this;
+        }
+
+        public Builder displaySkip(boolean displaySkip) {
+            materialIntroView.displaySkipButton = displaySkip;
+            return this;
+        }
+
+        public Builder skipText(String text) {
+            materialIntroView.skipButtonText = text;
             return this;
         }
 

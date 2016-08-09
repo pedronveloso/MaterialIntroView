@@ -56,6 +56,8 @@ public class MainFragment extends Fragment implements View.OnClickListener{
                 .setDelayMillis(200)
                 .enableFadeAnimation(true)
                 .performClick(true)
+                .displaySkip(true)
+                .skipText("Skip")
                 .setInfoText(text)
                 .setTarget(view)
                 .setUsageId(usageId) //THIS SHOULD BE UNIQUE ID
